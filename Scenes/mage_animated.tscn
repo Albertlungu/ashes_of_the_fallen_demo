@@ -1,0 +1,5 @@
+[gd_scene load_steps=2 format=3 uid="uid://dgd8i01irtv6a"]
+
+[ext_resource type="PackedScene" uid="uid://b2iplqqn6wsiy" path="res://ashes-of-the-fallen-assets/KayKit_Adventurers_1.0_FREE/Characters/gltf/Mage.glb" id="1_5d52k"]
+
+[node name="Mage" instance=ExtResource("1_5d52k")]

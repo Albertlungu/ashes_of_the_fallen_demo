@@ -1,0 +1,14 @@
+[gd_scene load_steps=2 format=3 uid="uid://bh7tponqrw223"]
+
+[ext_resource type="PackedScene" uid="uid://dmncbq5sklt0o" path="res://ashes-of-the-fallen-assets/KayKit_Adventurers_1.0_FREE/Characters/gltf/Barbarian.glb" id="1_l86q7"]
+
+[node name="Barbarian" instance=ExtResource("1_l86q7")]
+
+[node name="1H_Axe_Offhand" parent="Rig/Skeleton3D/handslot_l" index="0"]
+visible = false
+
+[node name="1H_Axe" parent="Rig/Skeleton3D/handslot_r" index="0"]
+visible = false
+
+[node name="AnimationPlayer" parent="." index="1"]
+autoplay = "Walking_A"

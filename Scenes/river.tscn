@@ -1,0 +1,50 @@
+[gd_scene load_steps=9 format=3 uid="uid://bmwj2ao6ycurq"]
+
+[ext_resource type="Texture2D" uid="uid://clvmjs8u55v6f" path="res://ashes-of-the-fallen-assets/Environment/Water 002 3D Textures/Water_002_COLOR.jpg" id="1_mv45q"]
+[ext_resource type="Script" uid="uid://bqri2bxsjroh5" path="res://Scripts/river.gd" id="1_r4p4o"]
+[ext_resource type="Texture2D" uid="uid://ck4sc13iypehj" path="res://ashes-of-the-fallen-assets/Environment/Water 002 3D Textures/Water_002_NORM.jpg" id="2_r4p4o"]
+[ext_resource type="Shader" uid="uid://be67p5crxwps4" path="res://Shaders/river_flow.gdshader" id="3_ukosj"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_7ql4q"]
+albedo_texture = ExtResource("1_mv45q")
+normal_enabled = true
+normal_texture = ExtResource("2_r4p4o")
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_qstg5"]
+material = SubResource("StandardMaterial3D_7ql4q")
+size = Vector2(400, 1200)
+subdivide_width = 10
+subdivide_depth = 20
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_0yj72"]
+render_priority = 0
+shader = ExtResource("3_ukosj")
+shader_parameter/water_texture = ExtResource("1_mv45q")
+shader_parameter/normal_map = ExtResource("2_r4p4o")
+shader_parameter/uv_offset = Vector2(0, 0)
+shader_parameter/water_tint = Color(0.80919814, 0.90347564, 1, 0.7019608)
+shader_parameter/metallic = 0.3
+shader_parameter/roughness = 0.2
+shader_parameter/normal_strength = 1.0
+shader_parameter/normal_speed_multiplier = 1.8610000883975
+shader_parameter/reflection_strength = 1.0
+shader_parameter/fresnel_power = 2.0
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ukosj"]
+size = Vector3(400, 20, 1200)
+
+[node name="River" type="Node3D"]
+script = ExtResource("1_r4p4o")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("PlaneMesh_qstg5")
+surface_material_override/0 = SubResource("ShaderMaterial_0yj72")
+
+[node name="WaterArea" type="Area3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="WaterArea"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -11.271654, 0)
+shape = SubResource("BoxShape3D_ukosj")
+debug_color = Color(0.14509805, 0.28627452, 0.78039217, 0.47058824)
+
+[connection signal="body_entered" from="WaterArea" to="." method="_on_water_area_body_entered"]

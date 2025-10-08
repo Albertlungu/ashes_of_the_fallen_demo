@@ -1,0 +1,290 @@
+[gd_scene load_steps=35 format=3 uid="uid://dfr022c3nqdl4"]
+
+[ext_resource type="Script" uid="uid://c4un6jim6c1yd" path="res://Scripts/main.gd" id="1_6iyac"]
+[ext_resource type="Script" uid="uid://dck7nw58j3csp" path="res://Scripts/player.gd" id="2_8gbba"]
+[ext_resource type="PackedScene" uid="uid://bh7tponqrw223" path="res://Scenes/barbarian_animated.tscn" id="2_bo1nx"]
+[ext_resource type="Terrain3DMaterial" uid="uid://b7sxrmhq5dntj" path="res://Scenes/new_terrain_3d_material.tres" id="3_6bp64"]
+[ext_resource type="Texture2D" uid="uid://dulkbdkesaqqs" path="res://ashes-of-the-fallen-assets/PBR Materials/badlands-boulders_albedo.png" id="5_6bp64"]
+[ext_resource type="Texture2D" uid="uid://b71ibomiw287l" path="res://ashes-of-the-fallen-assets/PBR Materials/badlands-boulders_normal-ogl.png" id="5_344ge"]
+[ext_resource type="Texture2D" uid="uid://bp21uehyo3lyt" path="res://ashes-of-the-fallen-assets/PBR Materials/rocky-dunes1_albedo.png" id="6_ynf5e"]
+[ext_resource type="Texture2D" uid="uid://br1mswrjlved1" path="res://ashes-of-the-fallen-assets/PBR Materials/rocky-dunes1_normal-ogl.png" id="7_hptm8"]
+[ext_resource type="Texture2D" uid="uid://bakxvlyix7l1e" path="res://ashes-of-the-fallen-assets/PBR Materials/bumpy_worn_ground_albedo.png" id="8_ynf5e"]
+[ext_resource type="Texture2D" uid="uid://0po2dp3o4out" path="res://ashes-of-the-fallen-assets/PBR Materials/bumpy_worn_ground_normal-ogl.png" id="9_hptm8"]
+[ext_resource type="Texture2D" uid="uid://13ifhaovm8uy" path="res://ashes-of-the-fallen-assets/PBR Materials/rocky-rugged-terrain_1_albedo.png" id="10_d1ilt"]
+[ext_resource type="Texture2D" uid="uid://cqobu7nq41th" path="res://ashes-of-the-fallen-assets/PBR Materials/rocky-rugged-terrain_1_normal-ogl.png" id="11_6iyac"]
+[ext_resource type="PackedScene" uid="uid://bmwj2ao6ycurq" path="res://Scenes/river.tscn" id="13_fdnlq"]
+[ext_resource type="Shader" uid="uid://dndkr3iddtj3l" path="res://atmosphere.gdshader" id="13_k12tt"]
+[ext_resource type="PackedScene" uid="uid://d1ov1if43se18" path="res://Scenes/mountain_temple.tscn" id="14_jkdf5"]
+[ext_resource type="PackedScene" uid="uid://ciu6dgkf1pni5" path="res://Scenes/temple_island.tscn" id="15_wsu2k"]
+[ext_resource type="Script" uid="uid://cd3riohqf4c38" path="res://Scenes/day_night_manager.gd" id="17_h1bgf"]
+[ext_resource type="PackedScene" uid="uid://x4ufivlo4qc7" path="res://Scenes/mountain_portal.tscn" id="18_b3802"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_bo1nx"]
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_jjvhh"]
+size = Vector2(100, 100)
+
+[sub_resource type="Skin" id="Skin_8gbba"]
+
+[sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_jkdf5"]
+data = PackedVector3Array(50, 0, 50, -50, 0, 50, 50, 0, -50, -50, 0, 50, -50, 0, -50, 50, 0, -50)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_kry3j"]
+size = Vector3(100, 0.1, 100)
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_jjvhh"]
+radius = 0.7
+height = 2.5756836
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_344ge"]
+transparency = 4
+cull_mode = 2
+vertex_color_use_as_albedo = true
+backlight_enabled = true
+backlight = Color(0.5, 0.5, 0.5, 1)
+distance_fade_mode = 1
+distance_fade_min_distance = 128.0
+distance_fade_max_distance = 96.0
+
+[sub_resource type="Terrain3DMeshAsset" id="Terrain3DMeshAsset_ynf5e"]
+generated_type = 1
+height_offset = 0.5
+material_override = SubResource("StandardMaterial3D_344ge")
+last_lod = 0
+last_shadow_lod = 0
+lod0_range = 128.0
+
+[sub_resource type="Terrain3DTextureAsset" id="Terrain3DTextureAsset_344ge"]
+name = "badlands-boulders_albedo"
+albedo_texture = ExtResource("5_6bp64")
+normal_texture = ExtResource("5_344ge")
+
+[sub_resource type="Terrain3DTextureAsset" id="Terrain3DTextureAsset_d1ilt"]
+name = "rocky-dunes1_albedo"
+id = 1
+albedo_texture = ExtResource("6_ynf5e")
+normal_texture = ExtResource("7_hptm8")
+
+[sub_resource type="Terrain3DTextureAsset" id="Terrain3DTextureAsset_6iyac"]
+name = "bumpy_worn_ground_albedo"
+id = 2
+albedo_texture = ExtResource("8_ynf5e")
+normal_texture = ExtResource("9_hptm8")
+
+[sub_resource type="Terrain3DTextureAsset" id="Terrain3DTextureAsset_fdnlq"]
+name = "rocky-rugged-terrain_1_albedo"
+id = 3
+albedo_texture = ExtResource("10_d1ilt")
+normal_texture = ExtResource("11_6iyac")
+
+[sub_resource type="Terrain3DAssets" id="Terrain3DAssets_fdnlq"]
+mesh_list = Array[Terrain3DMeshAsset]([SubResource("Terrain3DMeshAsset_ynf5e")])
+texture_list = Array[Terrain3DTextureAsset]([SubResource("Terrain3DTextureAsset_344ge"), SubResource("Terrain3DTextureAsset_d1ilt"), SubResource("Terrain3DTextureAsset_6iyac"), SubResource("Terrain3DTextureAsset_fdnlq")])
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_h1bgf"]
+shader = ExtResource("13_k12tt")
+shader_parameter/sun_direction = Vector3(10000, 0.001, 0.5)
+shader_parameter/moon_direction = Vector3(0, -0.5, -0.5)
+shader_parameter/day_top_color = Color(0.27963203, 0.5118986, 0.87934786, 1)
+shader_parameter/day_horizon_color = Color(0.28522915, 0.41670617, 0.68910617, 1)
+shader_parameter/night_top_color = Color(0.16568503, 0.16603968, 0.35278463, 1)
+shader_parameter/night_horizon_color = Color(0.16313061, 0.16346753, 0.3630733, 1)
+shader_parameter/sunset_color = Color(1, 0.4, 0.2, 1)
+shader_parameter/sunrise_color = Color(1, 0.6, 0.4, 1)
+shader_parameter/sun_size = 0.00999999977648
+shader_parameter/sun_intensity = 0.0
+shader_parameter/atmosphere_thickness = 1.126000053485
+shader_parameter/horizon_glow = 1.034000049115
+shader_parameter/star_density = 1.0
+shader_parameter/star_brightness = 1.0
+shader_parameter/enable_clouds = true
+shader_parameter/cloud_speed = 0.0430000020425
+shader_parameter/cloud_coverage = 0.418000019855
+shader_parameter/cloud_density = 0.4110000195225
+shader_parameter/cloud_scale = 1.09400004870512
+shader_parameter/fog_color = Color(0.6, 0.65, 0.7, 1)
+shader_parameter/fog_density = 0.39600001881
+shader_parameter/fog_height = 1.0
+
+[sub_resource type="Sky" id="Sky_ynf5e"]
+sky_material = SubResource("ShaderMaterial_h1bgf")
+
+[sub_resource type="Environment" id="Environment_hptm8"]
+background_mode = 2
+background_color = Color(0.64345026, 0.51343405, 0, 1)
+background_energy_multiplier = 1.61
+sky = SubResource("Sky_ynf5e")
+ambient_light_source = 2
+ambient_light_color = Color(0.6666667, 0.73333335, 1, 1)
+ambient_light_energy = 0.4
+glow_normalized = true
+glow_intensity = 0.63
+fog_light_color = Color(0.9233824, 0.8837138, 0.98109466, 1)
+fog_light_energy = 0.05
+volumetric_fog_density = 0.0016
+volumetric_fog_albedo = Color(0.30095628, 0.25047258, 0.11310082, 1)
+volumetric_fog_emission_energy = 105.6
+volumetric_fog_length = 168.6
+volumetric_fog_detail_spread = 6.0
+adjustment_enabled = true
+adjustment_brightness = 1.09
+adjustment_contrast = 1.34
+adjustment_saturation = 1.09
+
+[node name="Node3D" type="Node3D"]
+script = ExtResource("1_6iyac")
+
+[node name="Floor" type="StaticBody3D" parent="."]
+visible = false
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Floor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.04456854, -0.01861763, 0)
+material_overlay = SubResource("ShaderMaterial_bo1nx")
+mesh = SubResource("PlaneMesh_jjvhh")
+skin = SubResource("Skin_8gbba")
+
+[node name="MeshInstance3D_col" type="StaticBody3D" parent="Floor/MeshInstance3D"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Floor/MeshInstance3D/MeshInstance3D_col"]
+shape = SubResource("ConcavePolygonShape3D_jkdf5")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Floor"]
+shape = SubResource("BoxShape3D_kry3j")
+debug_color = Color(0.98039216, 0, 0.38039216, 0.99607843)
+
+[node name="Light" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.27889043, 0.9603229, 0, -0.9603229, 0.27889043, 0, 149.05322, 0)
+visible = false
+light_energy = 0.3
+light_volumetric_fog_energy = 16.0
+light_angular_distance = 3.9
+directional_shadow_split_1 = 0.35
+
+[node name="UI" type="CanvasLayer" parent="."]
+
+[node name="HUD" type="Control" parent="UI"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="DamageFlash" type="ColorRect" parent="UI"]
+offset_top = 53.0
+offset_right = 5296.0
+offset_bottom = 2732.0
+mouse_filter = 2
+color = Color(1, 0, 0, 0)
+
+[node name="WaterOverlay" type="ColorRect" parent="UI"]
+visible = false
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.14509805, 0.28627452, 0.78039217, 0.47058824)
+
+[node name="HealthBar" type="ProgressBar" parent="UI"]
+offset_left = 136.0
+offset_top = 47.0
+offset_right = 483.0
+offset_bottom = 101.0
+
+[node name="StaminaBar" type="ProgressBar" parent="UI"]
+offset_left = 138.0
+offset_top = 142.0
+offset_right = 481.0
+offset_bottom = 198.0
+
+[node name="HealthLabel" type="Label" parent="UI"]
+offset_left = 44.0
+offset_top = 61.0
+offset_right = 84.0
+offset_bottom = 84.0
+
+[node name="StaminaLabel" type="Label" parent="UI"]
+offset_left = 46.0
+offset_top = 157.0
+offset_right = 86.0
+offset_bottom = 180.0
+
+[node name="player" type="CharacterBody3D" parent="." node_paths=PackedStringArray("health_bar", "stamina_bar", "health_label", "stamina_label", "water_overlay")]
+transform = Transform3D(-3.278354e-08, 0, -0.75, 0, 0.75, 0, 0.75, 0, -3.278354e-08, 212.31146, 64.79884, -144.06052)
+script = ExtResource("2_8gbba")
+health_bar = NodePath("../UI/HealthBar")
+stamina_bar = NodePath("../UI/StaminaBar")
+health_label = NodePath("../UI/HealthLabel")
+stamina_label = NodePath("../UI/StaminaLabel")
+water_overlay = NodePath("../UI/WaterOverlay")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="player"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2878418, 0)
+shape = SubResource("CapsuleShape3D_jjvhh")
+debug_color = Color(0.95686275, 0, 0.5372549, 1)
+
+[node name="Barbarian" parent="player" instance=ExtResource("2_bo1nx")]
+transform = Transform3D(-1, 0, -1.509958e-07, 0, 1, 0, 1.509958e-07, 0, -1, 0, -1, 0)
+
+[node name="OmniLight3D" type="OmniLight3D" parent="player"]
+transform = Transform3D(1, 0, 0, 0, 0.90258527, 0.43051112, 0, -0.43051112, 0.90258527, 0, 0, 0)
+visible = false
+layers = 1023
+omni_range = 3.654
+omni_attenuation = 0.5
+
+[node name="CameraPivot" type="Node3D" parent="player"]
+
+[node name="FP_Camera" type="Camera3D" parent="player/CameraPivot"]
+transform = Transform3D(1.3333334, 0, 0, 0, 1.3332756, 0.0124032935, 0, -0.0124032935, 1.3332756, 0, 0.57385063, -1.0966301)
+fov = 100.0
+
+[node name="TP_Camera" type="Camera3D" parent="player/CameraPivot"]
+transform = Transform3D(1.3333334, 0, 0, 0, 1.3091285, 0.2529042, 0, -0.2529042, 1.3091285, 1.0913391, 0.77513504, 1.1857815)
+fov = 90.0
+
+[node name="FV_Camera" type="Camera3D" parent="player/CameraPivot"]
+transform = Transform3D(-1.3296894, 5.301236e-09, -0.09850976, -0.026012309, 1.2860091, 0.35111544, 0.095013335, 0.3520777, -1.2824943, 0, 0.6603451, -2.839742)
+fov = 90.0
+
+[node name="Terrain3D" type="Terrain3D" parent="."]
+data_directory = "res://terrain_3d_data"
+material = ExtResource("3_6bp64")
+assets = SubResource("Terrain3DAssets_fdnlq")
+top_level = true
+metadata/_edit_lock_ = true
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_hptm8")
+
+[node name="Sun" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 261.9773, 0)
+light_color = Color(1, 0.9137255, 0.76862746, 1)
+light_energy = 0.34
+shadow_enabled = true
+shadow_opacity = 0.6
+
+[node name="Moon" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 261.71637, 0)
+light_color = Color(0.50122976, 0.6953676, 0.9874696, 1)
+light_energy = 0.005
+shadow_enabled = true
+shadow_opacity = 0.6
+sky_mode = 1
+
+[node name="River" parent="." instance=ExtResource("13_fdnlq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 99.50393, 14.806168, -23.186825)
+flow_direction = Vector2(1, 1)
+
+[node name="island_temple" parent="." instance=ExtResource("15_wsu2k")]
+transform = Transform3D(-3.278354e-07, 0, -7.5, 0, 7.5, 0, 7.5, 0, -3.278354e-07, 68.23955, 13.006069, 2.47575)
+
+[node name="DayNightManager" type="Node3D" parent="."]
+script = ExtResource("17_h1bgf")
+
+[node name="mountain" type="Node3D" parent="."]
+
+[node name="mountain_temple" parent="mountain" instance=ExtResource("14_jkdf5")]
+transform = Transform3D(17.394087, 0, 30.371792, 0, 35, 0, -30.371792, 0, 17.394087, 213.11732, 60.892197, -175.51839)
+
+[node name="mountain_portal" parent="mountain" instance=ExtResource("18_b3802")]
+transform = Transform3D(0.4969739, 0, 0.8677655, 0, 1, 0, -0.8677655, 0, 0.4969739, 213.117, 62.82853, -175.518)

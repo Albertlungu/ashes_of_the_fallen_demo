@@ -1,0 +1,52 @@
+[gd_scene load_steps=7 format=3 uid="uid://dpqngj5syd8vf"]
+
+[ext_resource type="PackedScene" uid="uid://bh7tponqrw223" path="res://Scenes/barbarian_animated.tscn" id="1_e24ty"]
+[ext_resource type="Script" uid="uid://kfdcrqhqc8" path="res://Scripts/character_lobby.gd" id="1_yr26o"]
+[ext_resource type="PackedScene" uid="uid://il7uqjov6x5g" path="res://Scenes/knight_animated.tscn" id="3_xx6xx"]
+[ext_resource type="PackedScene" uid="uid://dgd8i01irtv6a" path="res://Scenes/mage_animated.tscn" id="4_14o0n"]
+[ext_resource type="PackedScene" uid="uid://l5fj4n3w5scn" path="res://Scenes/rogue_animated.tscn" id="5_gunwo"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_g5myh"]
+
+[node name="CharacterLobby" type="Node3D"]
+script = ExtResource("1_yr26o")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.8443747, 0.53575313, 0, -0.53575313, 0.8443747, 0, 4.244188, 4.7869596)
+
+[node name="Pedestals" type="Node3D" parent="."]
+
+[node name="BarbarianPedestal" type="Node3D" parent="Pedestals"]
+
+[node name="Barbarian" parent="Pedestals/BarbarianPedestal" instance=ExtResource("1_e24ty")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.8979816, 0, -0.117334604)
+
+[node name="KnightPedestal" type="Node3D" parent="Pedestals"]
+
+[node name="Knight" parent="Pedestals/KnightPedestal" instance=ExtResource("3_xx6xx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.7248569, 0, 0)
+
+[node name="MagePedestal" type="Node3D" parent="Pedestals"]
+
+[node name="Mage" parent="Pedestals/MagePedestal" instance=ExtResource("4_14o0n")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.0990543, 0, -0.077878)
+
+[node name="RoguePedestal" type="Node3D" parent="Pedestals"]
+
+[node name="Rogue_Hooded" parent="Pedestals/RoguePedestal" instance=ExtResource("5_gunwo")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4182687, 0, 0.02717328)
+
+[node name="UI" type="CanvasLayer" parent="."]
+
+[node name="CharacterName" type="Label" parent="UI"]
+offset_right = 40.0
+offset_bottom = 23.0
+label_settings = SubResource("LabelSettings_g5myh")
+
+[node name="Abilities" type="RichTextLabel" parent="UI"]
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="OmniLight3D" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.12112236, 0.7826481, 0)
+omni_range = 9.162
