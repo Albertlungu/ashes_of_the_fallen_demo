@@ -44,22 +44,22 @@ fov = 90.0
 [node name="GroundRaycast" type="RayCast3D" parent="."]
 target_position = Vector3(0, -2, 0)
 
-[node name="UI" type="CanvasLayer" parent="."]
+[node name="HealthStamina" type="CanvasLayer" parent="."]
 
-[node name="HUD" type="Control" parent="UI"]
+[node name="HUD" type="Control" parent="HealthStamina"]
 layout_mode = 3
 anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
 
-[node name="DamageFlash" type="ColorRect" parent="UI"]
+[node name="DamageFlash" type="ColorRect" parent="HealthStamina"]
 offset_top = 53.0
 offset_right = 5296.0
 offset_bottom = 2732.0
 mouse_filter = 2
 color = Color(0.36098683, 0.48335028, 0.9882626, 0.05490196)
 
-[node name="WaterOverlay" type="ColorRect" parent="UI"]
+[node name="WaterOverlay" type="ColorRect" parent="HealthStamina"]
 visible = false
 anchors_preset = 15
 anchor_right = 1.0
@@ -68,25 +68,25 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.14509805, 0.28627452, 0.78039217, 0.47058824)
 
-[node name="HealthBar" type="ProgressBar" parent="UI"]
+[node name="HealthBar" type="ProgressBar" parent="HealthStamina"]
 offset_left = 136.0
 offset_top = 47.0
 offset_right = 483.0
 offset_bottom = 101.0
 
-[node name="StaminaBar" type="ProgressBar" parent="UI"]
+[node name="StaminaBar" type="ProgressBar" parent="HealthStamina"]
 offset_left = 138.0
 offset_top = 142.0
 offset_right = 481.0
 offset_bottom = 198.0
 
-[node name="HealthLabel" type="Label" parent="UI"]
+[node name="HealthLabel" type="Label" parent="HealthStamina"]
 offset_left = 44.0
 offset_top = 61.0
 offset_right = 84.0
 offset_bottom = 84.0
 
-[node name="StaminaLabel" type="Label" parent="UI"]
+[node name="StaminaLabel" type="Label" parent="HealthStamina"]
 offset_left = 46.0
 offset_top = 157.0
 offset_right = 86.0

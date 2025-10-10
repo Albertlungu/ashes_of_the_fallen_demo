@@ -5,7 +5,7 @@ extends Node3D
 
 @onready var river_mesh: MeshInstance3D = $MeshInstance3D
 @onready var water_area: Area3D = $WaterArea
-@onready var camera_water_area: Area3D = $CameraWaterArea
+#@onready var camera_water_area: Area3D = $CameraWaterArea
 var material: ShaderMaterial
 
 func _ready():
@@ -17,9 +17,9 @@ func _ready():
 		water_area.body_entered.connect(_on_body_entered)
 		water_area.body_exited.connect(_on_body_exited)
 	
-	if camera_water_area:
-		camera_water_area.area_entered.connect(_on_camera_area_entered)
-		camera_water_area.area_exited.connect(_on_camera_area_exited)
+	#if camera_water_area:
+		#camera_water_area.area_entered.connect(_on_camera_area_entered)
+		#camera_water_area.area_exited.connect(_on_camera_area_exited)
 
 func _process(delta):
 	if material:

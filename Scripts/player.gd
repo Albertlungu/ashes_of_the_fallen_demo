@@ -74,12 +74,12 @@ const CARRY_SPEED_MULTIPLIER := 0.6
 const CARRY_SPRINT_MULTIPLIER := 1.2
 
 # --- UI nodes ---
-@onready var health_bar: ProgressBar = $UI/HealthBar
-@onready var stamina_bar: ProgressBar = $UI/StaminaBar
-@onready var health_label: Label = $UI/HealthLabel
-@onready var stamina_label: Label = $UI/StaminaLabel
-@onready var damage_overlay: ColorRect = $UI/DamageFlash
-@onready var water_overlay: ColorRect = $UI/WaterOverlay
+@onready var health_bar: ProgressBar = $HealthStamina/HealthBar
+@onready var stamina_bar: ProgressBar = $HealthStamina/StaminaBar
+@onready var health_label: Label = $HealthStamina/HealthLabel
+@onready var stamina_label: Label = $HealthStamina/StaminaLabel
+@onready var damage_overlay: ColorRect = $HealthStamina/DamageFlash
+@onready var water_overlay: ColorRect = $HealthStamina/WaterOverlay
 
 var health_stylebox: StyleBoxFlat
 var stamina_stylebox: StyleBoxFlat

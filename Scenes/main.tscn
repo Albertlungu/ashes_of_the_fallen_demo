@@ -1,4 +1,4 @@
-[gd_scene load_steps=36 format=3 uid="uid://dfr022c3nqdl4"]
+[gd_scene load_steps=37 format=3 uid="uid://dfr022c3nqdl4"]
 
 [ext_resource type="Script" uid="uid://c4un6jim6c1yd" path="res://Scripts/main.gd" id="1_6iyac"]
 [ext_resource type="Texture2D" uid="uid://dulkbdkesaqqs" path="res://ashes-of-the-fallen-assets/PBR Materials/badlands-boulders_albedo.png" id="5_6bp64"]
@@ -14,6 +14,7 @@
 [ext_resource type="PackedScene" uid="uid://d1ov1if43se18" path="res://Scenes/mountain_temple.tscn" id="14_jkdf5"]
 [ext_resource type="PackedScene" uid="uid://ciu6dgkf1pni5" path="res://Scenes/temple_island.tscn" id="15_wsu2k"]
 [ext_resource type="Script" uid="uid://cukuey5irqap5" path="res://Scripts/portal.gd" id="16_k12tt"]
+[ext_resource type="PackedScene" uid="uid://qbt06gybe6x4" path="res://UI/Inventory/Items-Slots/inventory.tscn" id="17_b3802"]
 [ext_resource type="Script" uid="uid://cd3riohqf4c38" path="res://Scenes/day_night_manager.gd" id="17_h1bgf"]
 [ext_resource type="PackedScene" uid="uid://x4ufivlo4qc7" path="res://Scenes/mountain_portal.tscn" id="18_b3802"]
 
@@ -243,3 +244,24 @@ portal_id = "\"main_to_maze1\""
 
 [node name="PlayerSpawnPoint" type="Marker3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 210.37875, 64.86692, -172.49377)
+
+[node name="UI" type="CanvasLayer" parent="."]
+
+[node name="InventoryInterface" type="Control" parent="UI"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PlayerInventory" parent="UI/InventoryInterface" instance=ExtResource("17_b3802")]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -180.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = 180.0
+grow_horizontal = 0
