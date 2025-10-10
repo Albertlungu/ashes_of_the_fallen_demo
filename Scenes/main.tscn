@@ -1,9 +1,6 @@
 [gd_scene load_steps=35 format=3 uid="uid://dfr022c3nqdl4"]
 
 [ext_resource type="Script" uid="uid://c4un6jim6c1yd" path="res://Scripts/main.gd" id="1_6iyac"]
-[ext_resource type="Script" uid="uid://dck7nw58j3csp" path="res://Scripts/player.gd" id="2_8gbba"]
-[ext_resource type="PackedScene" uid="uid://bh7tponqrw223" path="res://Scenes/barbarian_animated.tscn" id="2_bo1nx"]
-[ext_resource type="Terrain3DMaterial" uid="uid://b7sxrmhq5dntj" path="res://Scenes/new_terrain_3d_material.tres" id="3_6bp64"]
 [ext_resource type="Texture2D" uid="uid://dulkbdkesaqqs" path="res://ashes-of-the-fallen-assets/PBR Materials/badlands-boulders_albedo.png" id="5_6bp64"]
 [ext_resource type="Texture2D" uid="uid://b71ibomiw287l" path="res://ashes-of-the-fallen-assets/PBR Materials/badlands-boulders_normal-ogl.png" id="5_344ge"]
 [ext_resource type="Texture2D" uid="uid://bp21uehyo3lyt" path="res://ashes-of-the-fallen-assets/PBR Materials/rocky-dunes1_albedo.png" id="6_ynf5e"]
@@ -32,9 +29,46 @@ data = PackedVector3Array(50, 0, 50, -50, 0, 50, 50, 0, -50, -50, 0, 50, -50, 0,
 [sub_resource type="BoxShape3D" id="BoxShape3D_kry3j"]
 size = Vector3(100, 0.1, 100)
 
-[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_jjvhh"]
-radius = 0.7
-height = 2.5756836
+[sub_resource type="Gradient" id="Gradient_omdrb"]
+offsets = PackedFloat32Array(0.2, 1)
+colors = PackedColorArray(1, 1, 1, 1, 0, 0, 0, 1)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_ob6ng"]
+noise_type = 2
+frequency = 0.03
+cellular_jitter = 3.0
+cellular_return_type = 0
+domain_warp_enabled = true
+domain_warp_type = 1
+domain_warp_amplitude = 50.0
+domain_warp_fractal_type = 2
+domain_warp_fractal_lacunarity = 1.5
+domain_warp_fractal_gain = 1.0
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_cdojy"]
+noise = SubResource("FastNoiseLite_ob6ng")
+color_ramp = SubResource("Gradient_omdrb")
+seamless = true
+
+[sub_resource type="Terrain3DMaterial" id="Terrain3DMaterial_h1bgf"]
+_shader_parameters = {
+&"bias_distance": 512.0,
+&"blend_sharpness": 0.5,
+&"depth_blur": 0.0,
+&"enable_macro_variation": true,
+&"enable_projection": true,
+&"flat_terrain_normals": false,
+&"macro_variation1": Color(1, 1, 1, 1),
+&"macro_variation2": Color(1, 1, 1, 1),
+&"macro_variation_slope": 0.333,
+&"mipmap_bias": 1.0,
+&"noise1_angle": 0.0,
+&"noise1_offset": Vector2(0.5, 0.5),
+&"noise1_scale": 0.04,
+&"noise2_scale": 0.076,
+&"noise_texture": SubResource("NoiseTexture2D_cdojy"),
+&"projection_threshold": 0.8
+}
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_344ge"]
 transparency = 4
@@ -106,14 +140,14 @@ shader_parameter/fog_color = Color(0.6, 0.65, 0.7, 1)
 shader_parameter/fog_density = 0.39600001881
 shader_parameter/fog_height = 1.0
 
-[sub_resource type="Sky" id="Sky_ynf5e"]
+[sub_resource type="Sky" id="Sky_wsu2k"]
 sky_material = SubResource("ShaderMaterial_h1bgf")
 
 [sub_resource type="Environment" id="Environment_hptm8"]
 background_mode = 2
 background_color = Color(0.64345026, 0.51343405, 0, 1)
 background_energy_multiplier = 1.61
-sky = SubResource("Sky_ynf5e")
+sky = SubResource("Sky_wsu2k")
 ambient_light_source = 2
 ambient_light_color = Color(0.6666667, 0.73333335, 1, 1)
 ambient_light_energy = 0.4
@@ -160,95 +194,9 @@ light_volumetric_fog_energy = 16.0
 light_angular_distance = 3.9
 directional_shadow_split_1 = 0.35
 
-[node name="UI" type="CanvasLayer" parent="."]
-
-[node name="HUD" type="Control" parent="UI"]
-layout_mode = 3
-anchors_preset = 0
-offset_right = 40.0
-offset_bottom = 40.0
-
-[node name="DamageFlash" type="ColorRect" parent="UI"]
-offset_top = 53.0
-offset_right = 5296.0
-offset_bottom = 2732.0
-mouse_filter = 2
-color = Color(1, 0, 0, 0)
-
-[node name="WaterOverlay" type="ColorRect" parent="UI"]
-visible = false
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(0.14509805, 0.28627452, 0.78039217, 0.47058824)
-
-[node name="HealthBar" type="ProgressBar" parent="UI"]
-offset_left = 136.0
-offset_top = 47.0
-offset_right = 483.0
-offset_bottom = 101.0
-
-[node name="StaminaBar" type="ProgressBar" parent="UI"]
-offset_left = 138.0
-offset_top = 142.0
-offset_right = 481.0
-offset_bottom = 198.0
-
-[node name="HealthLabel" type="Label" parent="UI"]
-offset_left = 44.0
-offset_top = 61.0
-offset_right = 84.0
-offset_bottom = 84.0
-
-[node name="StaminaLabel" type="Label" parent="UI"]
-offset_left = 46.0
-offset_top = 157.0
-offset_right = 86.0
-offset_bottom = 180.0
-
-[node name="player" type="CharacterBody3D" parent="." node_paths=PackedStringArray("health_bar", "stamina_bar", "health_label", "stamina_label", "water_overlay")]
-transform = Transform3D(-3.278354e-08, 0, -0.75, 0, 0.75, 0, 0.75, 0, -3.278354e-08, 212.31146, 64.79884, -144.06052)
-script = ExtResource("2_8gbba")
-health_bar = NodePath("../UI/HealthBar")
-stamina_bar = NodePath("../UI/StaminaBar")
-health_label = NodePath("../UI/HealthLabel")
-stamina_label = NodePath("../UI/StaminaLabel")
-water_overlay = NodePath("../UI/WaterOverlay")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="player"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2878418, 0)
-shape = SubResource("CapsuleShape3D_jjvhh")
-debug_color = Color(0.95686275, 0, 0.5372549, 1)
-
-[node name="Barbarian" parent="player" instance=ExtResource("2_bo1nx")]
-transform = Transform3D(-1, 0, -1.509958e-07, 0, 1, 0, 1.509958e-07, 0, -1, 0, -1, 0)
-
-[node name="OmniLight3D" type="OmniLight3D" parent="player"]
-transform = Transform3D(1, 0, 0, 0, 0.90258527, 0.43051112, 0, -0.43051112, 0.90258527, 0, 0, 0)
-visible = false
-layers = 1023
-omni_range = 3.654
-omni_attenuation = 0.5
-
-[node name="CameraPivot" type="Node3D" parent="player"]
-
-[node name="FP_Camera" type="Camera3D" parent="player/CameraPivot"]
-transform = Transform3D(1.3333334, 0, 0, 0, 1.3332756, 0.0124032935, 0, -0.0124032935, 1.3332756, 0, 0.57385063, -1.0966301)
-fov = 100.0
-
-[node name="TP_Camera" type="Camera3D" parent="player/CameraPivot"]
-transform = Transform3D(1.3333334, 0, 0, 0, 1.3091285, 0.2529042, 0, -0.2529042, 1.3091285, 1.0913391, 0.77513504, 1.1857815)
-fov = 90.0
-
-[node name="FV_Camera" type="Camera3D" parent="player/CameraPivot"]
-transform = Transform3D(-1.3296894, 5.301236e-09, -0.09850976, -0.026012309, 1.2860091, 0.35111544, 0.095013335, 0.3520777, -1.2824943, 0, 0.6603451, -2.839742)
-fov = 90.0
-
 [node name="Terrain3D" type="Terrain3D" parent="."]
 data_directory = "res://terrain_3d_data"
-material = ExtResource("3_6bp64")
+material = SubResource("Terrain3DMaterial_h1bgf")
 assets = SubResource("Terrain3DAssets_fdnlq")
 top_level = true
 metadata/_edit_lock_ = true
@@ -287,4 +235,9 @@ script = ExtResource("17_h1bgf")
 transform = Transform3D(17.394087, 0, 30.371792, 0, 35, 0, -30.371792, 0, 17.394087, 213.11732, 60.892197, -175.51839)
 
 [node name="mountain_portal" parent="mountain" instance=ExtResource("18_b3802")]
-transform = Transform3D(0.4969739, 0, 0.8677655, 0, 1, 0, -0.8677655, 0, 0.4969739, 213.117, 62.82853, -175.518)
+transform = Transform3D(0.74546087, 0, 1.3016483, 0, 1.5, 0, -1.3016483, 0, 0.74546087, 213.117, 62.82853, -175.518)
+destination_scene = "\"res://Scenes/maze1.tscn\""
+portal_id = "\"main_to_maze1\""
+
+[node name="PlayerSpawnPoint" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 210.37875, 64.86692, -172.49377)

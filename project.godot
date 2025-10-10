@@ -15,9 +15,17 @@ run/main_scene="uid://dfr022c3nqdl4"
 config/features=PackedStringArray("4.5", "Forward Plus")
 config/icon="res://icon.svg"
 
+[autoload]
+
+Player="*res://Scenes/player.tscn"
+
 [editor_plugins]
 
 enabled=PackedStringArray("res://addons/terrain_3d/plugin.cfg")
+
+[global_group]
+
+portal=""
 
 [input]
 
