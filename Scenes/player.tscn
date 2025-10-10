@@ -1,7 +1,10 @@
-[gd_scene load_steps=4 format=3 uid="uid://bd588faxi0bvq"]
+[gd_scene load_steps=7 format=3 uid="uid://bd588faxi0bvq"]
 
 [ext_resource type="Script" uid="uid://dck7nw58j3csp" path="res://Scripts/player.gd" id="1_cvnsp"]
 [ext_resource type="PackedScene" uid="uid://bh7tponqrw223" path="res://Scenes/barbarian_animated.tscn" id="2_6t5aa"]
+[ext_resource type="Texture2D" uid="uid://dgbcvgux3xfik" path="res://ashes-of-the-fallen-assets/UI/RPG Expansion UI Pack/PNG/panel_blue.png" id="3_vgqql"]
+[ext_resource type="Texture2D" uid="uid://ck0a6kyqyws6i" path="res://ashes-of-the-fallen-assets/UI/RPG Expansion UI Pack/PNG/panelInset_beigeLight.png" id="4_fkybt"]
+[ext_resource type="Texture2D" uid="uid://ddn1ugor77mhm" path="res://ashes-of-the-fallen-assets/UI/RPG Expansion UI Pack/PNG/buttonLong_beige.png" id="5_fkybt"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_jjvhh"]
 radius = 0.7
@@ -57,7 +60,7 @@ offset_top = 53.0
 offset_right = 5296.0
 offset_bottom = 2732.0
 mouse_filter = 2
-color = Color(1, 0, 0, 0)
+color = Color(0.36098683, 0.48335028, 0.9882626, 0.05490196)
 
 [node name="WaterOverlay" type="ColorRect" parent="UI"]
 visible = false
@@ -91,3 +94,57 @@ offset_left = 46.0
 offset_top = 157.0
 offset_right = 86.0
 offset_bottom = 180.0
+
+[node name="InventoryContainer" type="Control" parent="UI"]
+layout_mode = 3
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -562.0
+offset_bottom = 737.0
+grow_horizontal = 0
+
+[node name="Background" type="ColorRect" parent="UI/InventoryContainer"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+color = Color(0.42352942, 0.42352942, 0.42352942, 0.50980395)
+
+[node name="InventoryPanel" type="Control" parent="UI/InventoryContainer"]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="SlotsGrid" type="GridContainer" parent="UI/InventoryContainer/InventoryPanel"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="ItemDescription" type="Control" parent="UI/InventoryContainer/InventoryPanel"]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="InventoryBackgroundImage" type="TextureRect" parent="UI/InventoryContainer"]
+layout_mode = 0
+offset_left = 22.0
+offset_top = 17.0
+offset_right = 553.0
+offset_bottom = 709.0
+texture = ExtResource("3_vgqql")
+
+[node name="PanelInset" type="TextureRect" parent="UI/InventoryContainer/InventoryBackgroundImage"]
+layout_mode = 0
+offset_left = 19.0
+offset_top = 15.0
+offset_right = 505.0
+offset_bottom = 477.0
+texture = ExtResource("4_fkybt")
+
+[node name="EmptyButton" type="TextureRect" parent="UI/InventoryContainer"]
+layout_mode = 0
+offset_left = 66.0
+offset_top = 529.0
+offset_right = 496.0
+offset_bottom = 657.0
+texture = ExtResource("5_fkybt")
