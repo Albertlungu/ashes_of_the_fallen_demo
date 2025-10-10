@@ -1,31 +1,3 @@
-[gd_resource type="Terrain3DAssets" load_steps=6 format=3 uid="uid://bvn0qoi5quxlm"]
-
-[ext_resource type="Texture2D" uid="uid://bp21uehyo3lyt" path="res://ashes-of-the-fallen-assets/PBR Materials/rocky-dunes1_albedo.png" id="1_t316f"]
-[ext_resource type="Texture2D" uid="uid://br1mswrjlved1" path="res://ashes-of-the-fallen-assets/PBR Materials/rocky-dunes1_normal-ogl.png" id="2_dkhhl"]
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_rtsjy"]
-transparency = 4
-cull_mode = 2
-vertex_color_use_as_albedo = true
-backlight_enabled = true
-backlight = Color(0.5, 0.5, 0.5, 1)
-distance_fade_mode = 1
-distance_fade_min_distance = 128.0
-distance_fade_max_distance = 96.0
-
-[sub_resource type="Terrain3DMeshAsset" id="Terrain3DMeshAsset_qqp4j"]
-generated_type = 1
-height_offset = 0.5
-material_override = SubResource("StandardMaterial3D_rtsjy")
-last_lod = 0
-last_shadow_lod = 0
-lod0_range = 128.0
-
-[sub_resource type="Terrain3DTextureAsset" id="Terrain3DTextureAsset_f1gg8"]
-name = "rocky-dunes1_albedo"
-albedo_texture = ExtResource("1_t316f")
-normal_texture = ExtResource("2_dkhhl")
-
-[resource]
-mesh_list = Array[Terrain3DMeshAsset]([SubResource("Terrain3DMeshAsset_qqp4j")])
-texture_list = Array[Terrain3DTextureAsset]([SubResource("Terrain3DTextureAsset_f1gg8")])
+version https://git-lfs.github.com/spec/v1
+oid sha256:ed2df208566ab7c9c3a381bcfb4237fd2cd0d21198013e823a375ba895c40549
+size 1271

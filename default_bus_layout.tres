@@ -1,4 +1,3 @@
-[gd_resource type="AudioBusLayout" format=3 uid="uid://uhbr8yeenr7v"]
-
-[resource]
-bus/0/volume_db = -0.032730103
+version https://git-lfs.github.com/spec/v1
+oid sha256:de984916264694573a8d99d30f1fa1aa780a47f726ec72db8b1eb39e6882f97b
+size 113
