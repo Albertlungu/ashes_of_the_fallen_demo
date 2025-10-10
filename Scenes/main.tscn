@@ -13,7 +13,7 @@
 [ext_resource type="Shader" uid="uid://dndkr3iddtj3l" path="res://atmosphere.gdshader" id="13_k12tt"]
 [ext_resource type="PackedScene" uid="uid://d1ov1if43se18" path="res://Scenes/mountain_temple.tscn" id="14_jkdf5"]
 [ext_resource type="PackedScene" uid="uid://ciu6dgkf1pni5" path="res://Scenes/temple_island.tscn" id="15_wsu2k"]
-[ext_resource type="Script" uid="uid://cukuey5irqap5" path="res://portal.gd" id="16_k12tt"]
+[ext_resource type="Script" uid="uid://cukuey5irqap5" path="res://Scripts/portal.gd" id="16_k12tt"]
 [ext_resource type="Script" uid="uid://cd3riohqf4c38" path="res://Scenes/day_night_manager.gd" id="17_h1bgf"]
 [ext_resource type="PackedScene" uid="uid://x4ufivlo4qc7" path="res://Scenes/mountain_portal.tscn" id="18_b3802"]
 
