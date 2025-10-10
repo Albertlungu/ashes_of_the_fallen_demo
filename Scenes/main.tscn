@@ -1,4 +1,4 @@
-[gd_scene load_steps=35 format=3 uid="uid://dfr022c3nqdl4"]
+[gd_scene load_steps=36 format=3 uid="uid://dfr022c3nqdl4"]
 
 [ext_resource type="Script" uid="uid://c4un6jim6c1yd" path="res://Scripts/main.gd" id="1_6iyac"]
 [ext_resource type="Texture2D" uid="uid://dulkbdkesaqqs" path="res://ashes-of-the-fallen-assets/PBR Materials/badlands-boulders_albedo.png" id="5_6bp64"]
@@ -13,6 +13,7 @@
 [ext_resource type="Shader" uid="uid://dndkr3iddtj3l" path="res://atmosphere.gdshader" id="13_k12tt"]
 [ext_resource type="PackedScene" uid="uid://d1ov1if43se18" path="res://Scenes/mountain_temple.tscn" id="14_jkdf5"]
 [ext_resource type="PackedScene" uid="uid://ciu6dgkf1pni5" path="res://Scenes/temple_island.tscn" id="15_wsu2k"]
+[ext_resource type="Script" uid="uid://cukuey5irqap5" path="res://portal.gd" id="16_k12tt"]
 [ext_resource type="Script" uid="uid://cd3riohqf4c38" path="res://Scenes/day_night_manager.gd" id="17_h1bgf"]
 [ext_resource type="PackedScene" uid="uid://x4ufivlo4qc7" path="res://Scenes/mountain_portal.tscn" id="18_b3802"]
 
@@ -236,7 +237,8 @@ transform = Transform3D(17.394087, 0, 30.371792, 0, 35, 0, -30.371792, 0, 17.394
 
 [node name="mountain_portal" parent="mountain" instance=ExtResource("18_b3802")]
 transform = Transform3D(0.74546087, 0, 1.3016483, 0, 1.5, 0, -1.3016483, 0, 0.74546087, 213.117, 62.82853, -175.518)
-destination_scene = "\"res://Scenes/maze1.tscn\""
+script = ExtResource("16_k12tt")
+destination_scene = "res://Scenes/maze1.tscn"
 portal_id = "\"main_to_maze1\""
 
 [node name="PlayerSpawnPoint" type="Marker3D" parent="."]

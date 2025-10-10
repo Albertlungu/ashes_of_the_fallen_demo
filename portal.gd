@@ -1,14 +1,35 @@
-extends StaticBody3D
+extends Node3D
 class_name Portal
 
 @export var destination_scene: String = ""
 @export var portal_id: String = ""  # Unique identifier for this portal
-@export var cooldown_time: float = 2.0  # Prevent immediate re-teleportation
+@export var cooldown_time: float = 1.0  # Prevent immediate re-teleportation
 
 var players_on_cooldown: Dictionary = {}
+var static_body: StaticBody3D = null
 
 func _ready():
-	add_to_group("portal")
+	# Find the StaticBody3D child recursively
+	static_body = _find_static_body(self)
+	
+	if static_body:
+		static_body.add_to_group("portal")
+		# Store a reference to this Portal script on the StaticBody3D
+		static_body.set_meta("portal_script", self)
+		print("✓ Portal '%s' initialized - Destination: '%s'" % [portal_id, destination_scene])
+	else:
+		push_error("✗ Portal '%s': No StaticBody3D found in children!" % portal_id)
+
+func _find_static_body(node: Node) -> StaticBody3D:
+	if node is StaticBody3D:
+		return node
+	
+	for child in node.get_children():
+		var result = _find_static_body(child)
+		if result:
+			return result
+	
+	return null
 
 func _process(delta):
 	# Clean up expired cooldowns

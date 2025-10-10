@@ -1,5 +1,19 @@
 extends CharacterBody3D
 
+# ============================================================
+# 🚨 DEBUG FLYING MODE - REMOVE BEFORE SUBMISSION! 🚨
+# ============================================================
+const DEBUG_FLYING_ENABLED = true  # Set to false to disable
+const FLY_SPEED = 15.0
+const FLY_SPRINT_MULTIPLIER = 2.5
+var is_flying = false
+# Double-tap detection
+var space_tap_count = 0
+var space_tap_timer = 0.0
+const DOUBLE_TAP_TIME = 0.3
+# ============================================================
+
+
 # --- Movement ---
 const SPEED := 4.0
 const SPRINT_MULTIPLIER := 1.8
@@ -213,9 +227,41 @@ func _input(event):
 		blocking = true
 	elif event.is_action_released("block"):
 		blocking = false
+		
+# ============================================================
+	# 🚨 DEBUG FLYING MODE - REMOVE BEFORE SUBMISSION! 🚨
+	# ============================================================
+	if DEBUG_FLYING_ENABLED and event.is_action_pressed("jump"):
+		space_tap_count += 1
+		space_tap_timer = DOUBLE_TAP_TIME
+		
+		if space_tap_count >= 2:
+			is_flying = !is_flying
+			space_tap_count = 0
+			space_tap_timer = 0.0
+			if is_flying:
+				print("🚨 DEBUG: FLYING MODE ENABLED 🚨")
+				velocity.y = 0  # Stop falling immediately
+			else:
+				print("🚨 DEBUG: FLYING MODE DISABLED 🚨")
+	# ============================================================
 
 
 func _physics_process(delta: float):
+# ============================================================
+	# 🚨 DEBUG FLYING MODE - REMOVE BEFORE SUBMISSION! 🚨
+	# ============================================================
+	# Handle double-tap timer
+	if DEBUG_FLYING_ENABLED and space_tap_timer > 0.0:
+		space_tap_timer -= delta
+		if space_tap_timer <= 0.0:
+			space_tap_count = 0
+	
+	if DEBUG_FLYING_ENABLED and is_flying:
+		_handle_flying_mode(delta)
+		return  # Skip all normal physics
+	# ============================================================
+	
 	if health <= 0:
 		return
 
@@ -544,19 +590,22 @@ func _check_for_portal():
 		
 	if not ground_raycast:
 		return
+	
+	ground_raycast.force_raycast_update()
 		
 	if ground_raycast.is_colliding():
 		var collider = ground_raycast.get_collider()
 		
 		if collider and collider.is_in_group("portal"):
-			var portal = collider as Portal
-			
-			if portal and portal.can_teleport(self):
-				# Only teleport if it's not the portal we just came from
-				if portal.portal_id != last_portal_used:
-					portal.start_cooldown(self)
-					last_portal_used = portal.portal_id
-					change_level(portal.destination_scene)
+			if collider.has_meta("portal_script"):
+				var portal = collider.get_meta("portal_script") as Portal
+				
+				if portal:
+					if portal.can_teleport(self) and portal.destination_scene != "":
+						if portal.portal_id != last_portal_used:
+							portal.start_cooldown(self)
+							last_portal_used = portal.portal_id
+							change_level(portal.destination_scene)
 
 
 
@@ -639,3 +688,48 @@ func get_active_camera() -> Camera3D:
 		CameraMode.FRONT_VIEW:
 			return fv_cam
 	return fp_cam
+
+# ============================================================
+# 🚨 DEBUG FLYING MODE - REMOVE BEFORE SUBMISSION! 🚨
+# ============================================================
+func _handle_flying_mode(delta: float):
+	var direction := Vector3.ZERO
+	
+	# Forward/Backward
+	if Input.is_action_pressed("move_forward"):
+		direction -= transform.basis.z
+	if Input.is_action_pressed("move_backward"):
+		direction += transform.basis.z
+	
+	# Left/Right
+	if Input.is_action_pressed("move_left"):
+		direction -= transform.basis.x
+	if Input.is_action_pressed("move_right"):
+		direction += transform.basis.x
+	
+	# Up (Space - but only if not double-tapping)
+	if Input.is_action_pressed("jump") and space_tap_timer <= 0.0:
+		direction.y += 1.0
+	
+	# Down (Shift key)
+	if Input.is_key_pressed(KEY_SHIFT):
+		direction.y -= 1.0
+	
+	direction = direction.normalized()
+	
+	# Sprint with Ctrl
+	var fly_speed = FLY_SPEED
+	if Input.is_key_pressed(KEY_CTRL):
+		fly_speed *= FLY_SPRINT_MULTIPLIER
+	
+	velocity = direction * fly_speed
+	move_and_slide()
+	
+	# Update UI
+	update_health_ui()
+	update_stamina_ui()
+	
+	# Show flying indicator
+	if health_label:
+		health_label.text = "🚨 FLYING MODE 🚨"
+# ============================================================
