@@ -13,6 +13,17 @@ var space_tap_timer = 0.0
 const DOUBLE_TAP_TIME = 0.3
 # ============================================================
 
+var inventory_data: InventoryData
+
+
+# --- Gem of Wit Ability ---
+var gem_active := false
+var gem_duration := 3.0             # seconds the effect lasts
+var gem_cooldown := 5.0             # seconds before reuse
+var gem_timer := 0.0
+var gem_cooldown_timer := 0.0
+var gem_time_scale := 0.5            # slow everything else to 50%
+var global_time_scale := 1.0
 
 # --- Movement ---
 const SPEED := 4.0
@@ -184,6 +195,12 @@ func _ready():
 	update_health_ui()
 	update_stamina_ui()
 	
+	if not inventory_data:
+		inventory_data = load("res://UI/Inventory/Inventories/player_inventory.tres")
+		
+	# Add player to group for detection
+	add_to_group("player")
+	
 	print("========== PLAYER _ready() END ==========\n")
 
 
@@ -228,6 +245,11 @@ func _input(event):
 	elif event.is_action_released("block"):
 		blocking = false
 		
+	# Gem of Wit activation
+	if event.is_action_pressed("use_gem") and has_gem_of_wit():
+		if not gem_active and gem_cooldown_timer <= 0.0:
+			_activate_gem_of_wit()
+		
 # ============================================================
 	# 🚨 DEBUG FLYING MODE - REMOVE BEFORE SUBMISSION! 🚨
 	# ============================================================
@@ -261,6 +283,19 @@ func _physics_process(delta: float):
 		_handle_flying_mode(delta)
 		return  # Skip all normal physics
 	# ============================================================
+	
+	if gem_active:
+		gem_timer -= delta
+		if gem_timer <= 0.0:
+			gem_active = false
+			Engine.time_scale = 1.0  # Reset time
+			# Remove any aura particles
+			for child in get_children():
+				if child is GPUParticles3D:
+					child.queue_free()
+
+	if gem_cooldown_timer > 0.0:
+		gem_cooldown_timer -= delta
 	
 	if health <= 0:
 		return
@@ -733,3 +768,68 @@ func _handle_flying_mode(delta: float):
 	if health_label:
 		health_label.text = "🚨 FLYING MODE 🚨"
 # ============================================================
+
+func pickup_gem(slot_data: SlotData) -> bool:
+	if inventory_data.add_item(slot_data):
+		print("Picked up: ", slot_data.item_data.name)
+		_play_pickup_effect()
+		return true
+	else:
+		print("Inventory full!")
+		return false
+
+
+func _play_pickup_effect() -> void:
+	# Placeholder for Phase 3
+	print("✨ Blue aura effect would play here")
+
+func has_gem_of_wit() -> bool:
+	if inventory_data:
+		print("📦 Checking inventory for 'Gem of Wit'...")
+		print("   Inventory slots: ", inventory_data.slot_datas.size())
+		
+		for i in range(inventory_data.slot_datas.size()):
+			var slot = inventory_data.slot_datas[i]
+			if slot and slot.item_data:
+				print("   Slot ", i, ": ", slot.item_data.name)
+				if slot.item_data.name == "Gem of Wit":
+					print("   ✅ FOUND GEM!")
+					return true
+		
+		print("   ❌ No gem found")
+		return false
+	
+	print("❌ No inventory_data!")
+	return false
+
+func _activate_gem_of_wit() -> void:
+	if gem_active:
+		return
+
+	gem_active = true
+	gem_timer = gem_duration
+	gem_cooldown_timer = gem_cooldown
+
+	# Deduct 5% HP
+	take_damage(int(max_health * 0.05))
+
+	# Slow everything else
+	global_time_scale = gem_time_scale
+
+	_show_gem_aura()
+
+func _show_gem_aura() -> void:
+	# Create a simple visual aura around the player
+	var aura = GPUParticles3D.new()
+	aura.amount = 150
+	aura.lifetime = gem_duration
+	aura.one_shot = true
+	
+	var material = ParticleProcessMaterial.new()
+	material.color = Color(0.2, 0.6, 1.0, 0.8)
+	material.emission_shape = ParticleProcessMaterial.EMISSION_SHAPE_SPHERE
+	material.emission_sphere_radius = 1.5
+	aura.process_material = material
+	
+	add_child(aura)
+	aura.restart()

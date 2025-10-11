@@ -1,0 +1,35 @@
+[gd_scene load_steps=6 format=3 uid="uid://bfydnju7p73er"]
+
+[ext_resource type="Script" uid="uid://q6730qn2h08q" path="res://UI/Inventory/Items-Slots/pickable_item.gd" id="1_1snrq"]
+[ext_resource type="PackedScene" uid="uid://cf2mnqcr6jqhw" path="res://ashes-of-the-fallen-assets/Items/Low Poly Stylized Gemstone.glb" id="2_4oll0"]
+[ext_resource type="Resource" uid="uid://2xtwlxuwoltb" path="res://UI/Inventory/Items-Slots/gem_of_wit.tres" id="2_e5i8c"]
+[ext_resource type="Resource" uid="uid://cbfs4cc5cjis6" path="res://UI/Inventory/Items-Slots/slot_with_gem.tres" id="3_h343l"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_e5i8c"]
+radius = 0.5307617
+height = 2.042468
+
+[node name="Area3D" type="Area3D"]
+script = ExtResource("1_1snrq")
+item_data = ExtResource("2_e5i8c")
+slot_data = ExtResource("3_h343l")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.0090020895, 0)
+shape = SubResource("CapsuleShape3D_e5i8c")
+
+[node name="GemModel" type="Node3D" parent="."]
+
+[node name="Sketchfab_Scene" parent="GemModel" instance=ExtResource("2_4oll0")]
+
+[node name="PickupLabel" type="Label3D" parent="GemModel"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2411702, -0.12588918)
+billboard = 1
+text = "Approach and 
+press \"E\" to pick up"
+
+[node name="UseLabel" type="Label3D" parent="GemModel"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.56486773, 0.22520733, -0.2395072)
+billboard = 1
+text = "Press \"G\" to use ability
+(Time slow)"
