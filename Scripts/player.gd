@@ -4,7 +4,7 @@ extends CharacterBody3D
 # 🚨 DEBUG FLYING MODE - REMOVE BEFORE SUBMISSION! 🚨
 # ============================================================
 const DEBUG_FLYING_ENABLED = true  # Set to false to disable
-const FLY_SPEED = 15.0
+const FLY_SPEED = 30.0
 const FLY_SPRINT_MULTIPLIER = 2.5
 var is_flying = false
 # Double-tap detection

@@ -1,0 +1,29 @@
+[gd_scene load_steps=5 format=3 uid="uid://bc87gnrofjrm6"]
+
+[ext_resource type="PackedScene" uid="uid://bdlmhhoj828ch" path="res://Scenes/alien_animal_baked.tscn" id="1_54mmy"]
+[ext_resource type="Script" uid="uid://fij7ke8mkdda" path="res://Scripts/boss_enemy.gd" id="1_hu4bx"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_hu4bx"]
+radius = 11.233398
+height = 40.5047
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_54mmy"]
+radius = 6.3188477
+height = 18.861544
+
+[node name="boss_enemy" type="CharacterBody3D"]
+script = ExtResource("1_hu4bx")
+
+[node name="Alien Animal Baked" parent="." instance=ExtResource("1_54mmy")]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 7.202099, -2.7325268)
+shape = SubResource("CapsuleShape3D_hu4bx")
+
+[node name="AttackRange" type="Area3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="AttackRange"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0.029478073, 7.1688714, 24.961967)
+shape = SubResource("CapsuleShape3D_54mmy")
+
+[node name="Timer" type="Timer" parent="."]
