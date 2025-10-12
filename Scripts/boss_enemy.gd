@@ -2,6 +2,9 @@ extends CharacterBody3D
 
 @onready var alien_instance: Node3D = $"Alien Animal Baked"
 @onready var anim_player: AnimationPlayer = alien_instance.get_node("AnimationPlayer")
+@export var death_spawn_scene: PackedScene
+@export var evaporate_rise_speed := 2.0
+@export var evaporate_scale_min := 0.05
 @onready var player: CharacterBody3D = null  # Will be set in _ready()
 @onready var attack_area: Area3D = $AttackRange  # The Area3D for detecting player hits
 
@@ -74,6 +77,8 @@ var health_stylebox: StyleBoxFlat
 var is_dying := false
 var fade_timer := 0.0
 var fade_duration := 2.0
+var death_spawned := false
+var death_spawn_position := Vector3.ZERO
 
 func _ready():
 	anim_player.play("01_Idle_Aggressive")
@@ -383,6 +388,7 @@ func _die():
 	print("Boss died!")
 	is_dying = true
 	set_physics_process(false)
+	death_spawn_position = global_position
 	
 	# Play death animation
 	anim_player.play("01_Die_1")
@@ -392,8 +398,14 @@ func _die():
 
 func _handle_death_fade(delta: float):
 	fade_timer -= delta
+	if alien_instance:
+		alien_instance.translate(Vector3.UP * evaporate_rise_speed * delta)
+		var t: float = max(fade_timer / fade_duration, evaporate_scale_min)
+		alien_instance.scale = Vector3.ONE * t
 	
 	if fade_timer <= 0:
+		if not death_spawned:
+			_spawn_death_scene()
 		queue_free()
 		return
 	
@@ -499,6 +511,20 @@ func _collect_meshes(node: Node):
 			mesh_materials.append(material)
 			mesh_default_colors.append(material.albedo_color)
 		_collect_meshes(child)
+
+
+func _spawn_death_scene() -> void:
+	death_spawned = true
+	if not death_spawn_scene:
+		return
+	var instance = death_spawn_scene.instantiate()
+	if not instance:
+		return
+	var parent = get_parent()
+	if parent:
+		parent.add_child(instance)
+		if instance is Node3D:
+			instance.global_transform = global_transform
 
 
 func _trigger_damage_flash():
