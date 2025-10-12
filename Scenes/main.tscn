@@ -244,7 +244,7 @@ destination_scene = "res://Scenes/maze1.tscn"
 portal_id = "\"main_to_maze1\""
 
 [node name="PlayerSpawnPoint" type="Marker3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -40.857895, 64.86692, 324.666)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -126.86443, 30.123913, 276.9307)
 
 [node name="UI" type="CanvasLayer" parent="."]
 
@@ -268,4 +268,4 @@ offset_bottom = 180.0
 grow_horizontal = 0
 
 [node name="boss_enemy" parent="." instance=ExtResource("18_fevyy")]
-transform = Transform3D(-0.027189791, 0, 0.29876533, 0, 0.3, 0, -0.29876533, 0, -0.027189791, -144.79987, 30.098297, 326.59573)
+transform = Transform3D(-0.018126527, 0, 0.1991769, 0, 0.2, 0, -0.1991769, 0, -0.018126527, -144.79987, 30.098297, 326.59573)

@@ -15,6 +15,10 @@ const DOUBLE_TAP_TIME = 0.3
 
 var inventory_data: InventoryData
 
+var light_attack_damage := 10.0
+var heavy_attack_damage := 25.0
+var attack_reach := 5.0  # How far the player can hit
+
 
 # --- Gem of Wit Ability ---
 var gem_active := false
@@ -29,7 +33,7 @@ var global_time_scale := 1.0
 const SPEED := 4.0
 const SPRINT_MULTIPLIER := 1.8
 const JUMP_VELOCITY := 4.0
-var gravity: float = 10.0
+var gravity: float = 15.0
 
 # --- Mouse look ---
 var mouse_sensitivity := 0.15
@@ -91,6 +95,7 @@ const CARRY_SPRINT_MULTIPLIER := 1.2
 @onready var stamina_label: Label = $HealthStamina/StaminaLabel
 @onready var damage_overlay: ColorRect = $HealthStamina/DamageFlash
 @onready var water_overlay: ColorRect = $HealthStamina/WaterOverlay
+@onready var crosshair: TextureRect = $HealthStamina/Crosshair
 
 var health_stylebox: StyleBoxFlat
 var stamina_stylebox: StyleBoxFlat
@@ -100,6 +105,9 @@ var fall_start_y := 0.0
 var is_falling := false
 const SAFE_FALL_DISTANCE := 5
 const DAMAGE_MULTIPLIER := 2.5
+
+const RESPAWN_HISTORY_SECONDS := 20.0
+const RESPAWN_SCREEN_SCENE := preload("res://UI/RespawnScreen.tscn")
 
 # --- Camera shake ---
 var shake_timer := 0.0
@@ -121,7 +129,15 @@ const SWIM_SURFACE_OFFSET := 0.5
 # --- Portal ---
 @onready var ground_raycast: RayCast3D = $GroundRaycast
 var is_teleporting := false
-var last_portal_used: String = ""  # Add this as a class variable at the top
+var last_portal_used: String = ""
+# --- Knockback System ---
+var knockback_velocity := Vector3.ZERO
+var knockback_decay_rate := 5.0  # How quickly knockback fades (units per second)
+
+var transform_history: Array = []
+var history_elapsed := 0.0
+var respawn_screen: RespawnScreen
+var last_damage_cause := "Unknown"
 
 
 
@@ -200,6 +216,10 @@ func _ready():
 		
 	# Add player to group for detection
 	add_to_group("player")
+	_ensure_respawn_screen()
+	transform_history.clear()
+	history_elapsed = 0.0
+	_update_transform_history(0.0)
 	
 	print("========== PLAYER _ready() END ==========\n")
 
@@ -355,6 +375,11 @@ func _physics_process(delta: float):
 	velocity.x = direction.x * current_speed
 	velocity.z = direction.z * current_speed
 
+	# Apply knockback if present
+	if knockback_velocity.length() > 0.01:
+		velocity += knockback_velocity
+		knockback_velocity = knockback_velocity.lerp(Vector3.ZERO, knockback_decay_rate * delta)  # Decay knockback over time
+
 	if is_swimming:
 		var reduced_gravity = gravity * 0.1
 		velocity.y -= reduced_gravity * delta
@@ -391,6 +416,7 @@ func _physics_process(delta: float):
 	_update_camera_shake(delta)
 	_update_damage_tint(delta)
 	_update_carried_item_position()
+	_update_transform_history(delta)
 
 	if stamina <= 0.0 and sprint_disabled:
 		_pulse_time += delta
@@ -438,6 +464,90 @@ func _update_carried_item_position():
 	carried_item.position = carry_offset
 
 
+func _update_crosshair():
+	if not crosshair:
+		return
+	var cam = get_active_camera()
+	if not cam:
+		return
+	var viewport_size = get_viewport().size
+	var fallback = viewport_size * 0.5 - crosshair.size * 0.5
+	var aim_origin = camera_pivot.global_position if camera_pivot else global_position
+	var aim_direction = -global_transform.basis.z
+	var aim_point = aim_origin + aim_direction * 20.0
+	if cam.is_position_behind(aim_point):
+		crosshair.position = fallback
+		return
+	var projected = cam.unproject_position(aim_point)
+	if not projected.is_finite():
+		crosshair.position = fallback
+		return
+	var screen_pos = Vector2(projected.x, projected.y)
+	crosshair.position = screen_pos - crosshair.size * 0.5
+
+
+func _update_transform_history(delta: float) -> void:
+	history_elapsed += delta
+	transform_history.append({
+		"transform": global_transform,
+		"position": global_position,
+		"forward": -global_transform.basis.z,
+		"time": history_elapsed
+	})
+	var cutoff_time = history_elapsed - RESPAWN_HISTORY_SECONDS
+	while transform_history.size() > 1 and transform_history[1]["time"] < cutoff_time:
+		transform_history.remove_at(0)
+
+
+func _get_respawn_state() -> Dictionary:
+	if transform_history.is_empty():
+		return {
+			"transform": global_transform,
+			"position": global_position,
+			"forward": -global_transform.basis.z
+		}
+	for i in range(transform_history.size() - 1, -1, -1):
+		if history_elapsed - transform_history[i]["time"] >= RESPAWN_HISTORY_SECONDS:
+			return transform_history[i]
+	return transform_history.front()
+
+
+func _ensure_respawn_screen() -> void:
+	if respawn_screen and is_instance_valid(respawn_screen):
+		return
+	respawn_screen = RESPAWN_SCREEN_SCENE.instantiate()
+	get_tree().root.add_child(respawn_screen)
+	respawn_screen.respawn_requested.connect(_on_respawn_screen_respawn_requested)
+	respawn_screen.quit_requested.connect(_on_respawn_screen_quit_requested)
+
+
+func _on_respawn_screen_respawn_requested(respawn_transform: Transform3D) -> void:
+	get_tree().paused = false
+	global_transform = respawn_transform
+	velocity = Vector3.ZERO
+	knockback_velocity = Vector3.ZERO
+	health = max_health
+	stamina = max_stamina
+	sprint_disabled = false
+	cooldown_timer = 0.0
+	mouse_captured = true
+	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+	_update_health_ui_after_respawn()
+	_update_transform_history(0.0)
+
+
+func _update_health_ui_after_respawn() -> void:
+	transform_history.clear()
+	history_elapsed = 0.0
+	update_health_ui()
+	update_stamina_ui()
+
+
+func _on_respawn_screen_quit_requested() -> void:
+	get_tree().paused = false
+	get_tree().quit()
+
+
 func update_health_ui():
 	if health_bar and health_stylebox:
 		health_bar.value = health
@@ -465,9 +575,14 @@ func update_stamina_ui():
 		stamina_label.text = "Stamina"
 
 
-func take_damage(amount: int) -> void:
+func take_damage(amount: int, knockback_force: Vector3 = Vector3.ZERO, cause: String = "Unknown") -> void:
+	if amount > 0:
+		last_damage_cause = cause
 	health -= amount
 	health = clamp(health, 0, max_health)
+	if knockback_force != Vector3.ZERO:
+		knockback_velocity = knockback_force  # Set knockback velocity for gradual application
+		print("Knockback applied: ", knockback_force)  # Debug: Confirm knockback is set
 	_start_camera_shake()
 	_start_damage_tint()
 	update_health_ui()
@@ -475,9 +590,17 @@ func take_damage(amount: int) -> void:
 		_die()
 
 
+
 func _die():
 	if is_carrying:
 		drop_item()
+	_ensure_respawn_screen()
+	var respawn_state := _get_respawn_state()
+	var respawn_transform: Transform3D = respawn_state.get("transform", global_transform)
+	var death_position := global_position
+	var death_forward := -global_transform.basis.z
+	if respawn_screen:
+		respawn_screen.show_screen(last_damage_cause, death_position, death_forward, 0.0, respawn_transform)
 	get_tree().paused = true
 
 
@@ -485,7 +608,7 @@ func _check_fall_damage():
 	var fall_distance = fall_start_y - global_position.y
 	if fall_distance > SAFE_FALL_DISTANCE:
 		var damage = (fall_distance - SAFE_FALL_DISTANCE) * DAMAGE_MULTIPLIER
-		take_damage(int(damage))
+		take_damage(int(damage), Vector3.ZERO, "Fall damage")
 
 
 func _update_animation(direction: Vector3, sprinting: bool):
@@ -542,11 +665,98 @@ func _update_animation(direction: Vector3, sprinting: bool):
 func _perform_light_attack():
 	attacking = true
 	anim_player.play("1H_Melee_Attack_Chop")
+	print("🗡️ Player performing LIGHT attack")
+	_check_for_hit(light_attack_damage)
 
 
 func _perform_heavy_attack():
 	attacking = true
 	anim_player.play("2H_Melee_Attack_Chop")
+	print("🗡️ Player performing HEAVY attack")
+	_check_for_hit(heavy_attack_damage)
+
+
+func _check_for_hit(damage: float):
+	print("🎯 Checking for hit with damage: ", damage)
+	
+	# Wait a tiny bit for the animation to start (simulates swing time)
+	await get_tree().create_timer(0.2).timeout
+	
+	print("⏰ Attack swing executed, checking for enemies...")
+	
+	# Get all enemies in the scene
+	var enemies = get_tree().get_nodes_in_group("enemies")
+	print("👹 Found ", enemies.size(), " enemies in scene")
+	
+	if enemies.size() == 0:
+		print("❌ NO ENEMIES FOUND! Make sure boss is in 'enemies' group")
+		return
+	
+	for enemy in enemies:
+		if not is_instance_valid(enemy):
+			print("⚠️ Invalid enemy reference, skipping")
+			continue
+		
+		var distance = global_position.distance_to(enemy.global_position)
+		print("📏 Distance to enemy '", enemy.name, "': ", distance, " (reach: ", attack_reach, ")")
+		
+		# Check if enemy is within reach
+		if distance <= attack_reach:
+			print("✅ Enemy is within reach!")
+			
+			# Check if enemy is roughly in front of the player
+			var to_enemy = (enemy.global_position - global_position).normalized()
+			var forward = -transform.basis.z
+			var dot = to_enemy.dot(forward)
+			
+			print("🎯 Dot product (facing): ", dot, " (need > 0.5)")
+			
+			# dot > 0.5 means enemy is roughly in front (within ~60 degree cone)
+			if dot > 0.5:
+				print("✅ Enemy is in front of player!")
+				
+				if enemy.has_method("take_damage"):
+					print("💥 HITTING ENEMY FOR ", damage, " DAMAGE!")
+					enemy.take_damage(damage)
+					_play_hit_effect(enemy.global_position)
+					return  # Only hit one enemy per attack
+				else:
+					print("❌ Enemy doesn't have 'take_damage' method!")
+			else:
+				print("❌ Enemy is NOT in front (behind or to the side)")
+		else:
+			print("❌ Enemy too far away")
+	
+	print("💨 Attack missed - no valid targets")
+
+
+func _play_hit_effect(hit_position: Vector3):
+	# Create a simple particle effect at hit location
+	var particles = GPUParticles3D.new()
+	get_parent().add_child(particles)
+	particles.global_position = hit_position
+	
+	particles.amount = 20
+	particles.lifetime = 0.5
+	particles.one_shot = true
+	particles.explosiveness = 1.0
+	
+	var material = ParticleProcessMaterial.new()
+	material.direction = Vector3(0, 1, 0)
+	material.spread = 45
+	material.initial_velocity_min = 2.0
+	material.initial_velocity_max = 4.0
+	material.gravity = Vector3(0, -9.8, 0)
+	material.color = Color.ORANGE_RED
+	
+	particles.process_material = material
+	particles.emitting = true
+	
+	# Clean up after effect finishes
+	await get_tree().create_timer(1.0).timeout
+	particles.queue_free()
+
+
 
 
 func _on_animation_finished(anim_name: String):

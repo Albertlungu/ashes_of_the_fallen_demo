@@ -1,7 +1,8 @@
-[gd_scene load_steps=4 format=3 uid="uid://bd588faxi0bvq"]
+[gd_scene load_steps=5 format=3 uid="uid://bd588faxi0bvq"]
 
 [ext_resource type="Script" uid="uid://dck7nw58j3csp" path="res://Scripts/player.gd" id="1_cvnsp"]
 [ext_resource type="PackedScene" uid="uid://bh7tponqrw223" path="res://Scenes/barbarian_animated.tscn" id="2_6t5aa"]
+[ext_resource type="Texture2D" uid="uid://cnv8m0k2aytkd" path="res://ashes-of-the-fallen-assets/UI/Sci-Fi UI Pack Space Expansion/Vector/Extra/crosshair_c.svg" id="3_6t5aa"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_jjvhh"]
 radius = 0.7
@@ -53,7 +54,7 @@ offset_right = 40.0
 offset_bottom = 40.0
 
 [node name="DamageFlash" type="ColorRect" parent="HealthStamina"]
-offset_top = 53.0
+offset_top = -8.0
 offset_right = 5296.0
 offset_bottom = 2732.0
 mouse_filter = 2
@@ -67,6 +68,20 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.14509805, 0.28627452, 0.78039217, 0.47058824)
+
+[node name="Crosshair" type="TextureRect" parent="HealthStamina"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -24.0
+offset_top = -24.0
+offset_right = 24.0
+offset_bottom = 24.0
+mouse_filter = 2
+texture = ExtResource("3_6t5aa")
+stretch_mode = 6
 
 [node name="HealthBar" type="ProgressBar" parent="HealthStamina"]
 offset_left = 136.0

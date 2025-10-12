@@ -27,3 +27,26 @@ transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0.02
 shape = SubResource("CapsuleShape3D_54mmy")
 
 [node name="Timer" type="Timer" parent="."]
+
+[node name="BossUI" type="CanvasLayer" parent="."]
+
+[node name="HealthBar" type="ProgressBar" parent="BossUI"]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -300.0
+offset_top = 60.0
+offset_right = 300.0
+offset_bottom = 113.0
+grow_horizontal = 2
+max_value = 1000.0
+value = 1000.0
+show_percentage = false
+
+[node name="HealthLabel" type="Label" parent="BossUI/HealthBar"]
+layout_mode = 0
+offset_left = 248.0
+offset_top = -29.0
+offset_right = 373.0
+offset_bottom = -6.0
+text = "Trial of Strength"
