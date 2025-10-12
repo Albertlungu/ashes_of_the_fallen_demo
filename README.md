@@ -23,6 +23,7 @@ A calm lil RPG 3D Indie game for DAYDREAM GLOBALLLLLLL. Made with Godot editor u
 
 ## How to run?
 Bro its not that deep its a godot project on itch.io
+
 **Keybinds:**
 - **WASD**: Movement
 - **Space Bar**: Jump
