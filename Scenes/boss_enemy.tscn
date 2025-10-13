@@ -12,6 +12,7 @@ radius = 6.3188477
 height = 18.861544
 
 [node name="boss_enemy" type="CharacterBody3D"]
+floor_snap_length = 1.0
 script = ExtResource("1_hu4bx")
 
 [node name="Alien Animal Baked" parent="." instance=ExtResource("1_54mmy")]

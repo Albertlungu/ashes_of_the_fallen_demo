@@ -26,8 +26,9 @@ var gem_duration := 3.0             # seconds the effect lasts
 var gem_cooldown := 5.0             # seconds before reuse
 var gem_timer := 0.0
 var gem_cooldown_timer := 0.0
-var gem_time_scale := 0.5            # slow everything else to 50%
-var global_time_scale := 1.0
+var gem_time_scale := 0.5            # slow enemies to 50%
+signal gem_time_changed(active: bool, time_scale: float)
+signal inventory_changed
 
 # --- Movement ---
 const SPEED := 4.0
@@ -308,7 +309,7 @@ func _physics_process(delta: float):
 		gem_timer -= delta
 		if gem_timer <= 0.0:
 			gem_active = false
-			Engine.time_scale = 1.0  # Reset time
+			emit_signal("gem_time_changed", false, 1.0)
 			# Remove any aura particles
 			for child in get_children():
 				if child is GPUParticles3D:
@@ -434,6 +435,7 @@ func pickup_item(item: Node3D) -> bool:
 	is_carrying = true
 	carried_item = item
 	sprint_toggled = false
+	emit_signal("inventory_changed")
 	
 	if carried_item.get_parent():
 		carried_item.get_parent().remove_child(carried_item)
@@ -454,6 +456,7 @@ func drop_item() -> void:
 	
 	is_carrying = false
 	carried_item = null
+	emit_signal("inventory_changed")
 
 
 func _update_carried_item_position():
@@ -983,6 +986,7 @@ func pickup_gem(slot_data: SlotData) -> bool:
 	if inventory_data.add_item(slot_data):
 		print("Picked up: ", slot_data.item_data.name)
 		_play_pickup_effect()
+		emit_signal("inventory_changed")
 		return true
 	else:
 		print("Inventory full!")
@@ -1023,8 +1027,8 @@ func _activate_gem_of_wit() -> void:
 	# Deduct 5% HP
 	take_damage(int(max_health * 0.05))
 
-	# Slow everything else
-	global_time_scale = gem_time_scale
+	# Notify listeners (enemies) to slow down
+	emit_signal("gem_time_changed", true, gem_time_scale)
 
 	_show_gem_aura()
 

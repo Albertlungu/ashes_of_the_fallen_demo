@@ -1,4 +1,4 @@
-[gd_scene load_steps=38 format=3 uid="uid://dfr022c3nqdl4"]
+[gd_scene load_steps=39 format=3 uid="uid://dfr022c3nqdl4"]
 
 [ext_resource type="Script" uid="uid://c4un6jim6c1yd" path="res://Scripts/main.gd" id="1_6iyac"]
 [ext_resource type="Texture2D" uid="uid://dulkbdkesaqqs" path="res://ashes-of-the-fallen-assets/PBR Materials/badlands-boulders_albedo.png" id="5_6bp64"]
@@ -18,6 +18,7 @@
 [ext_resource type="Script" uid="uid://cd3riohqf4c38" path="res://Scenes/day_night_manager.gd" id="17_h1bgf"]
 [ext_resource type="PackedScene" uid="uid://x4ufivlo4qc7" path="res://Scenes/mountain_portal.tscn" id="18_b3802"]
 [ext_resource type="PackedScene" uid="uid://bc87gnrofjrm6" path="res://Scenes/boss_enemy.tscn" id="18_fevyy"]
+[ext_resource type="Script" uid="uid://c24fdoyl3ryut" path="res://Scenes/boss_collision_diagnostic.gd" id="19_fevyy"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_bo1nx"]
 
@@ -170,6 +171,7 @@ adjustment_saturation = 1.09
 
 [node name="Node3D" type="Node3D"]
 script = ExtResource("1_6iyac")
+boss_scene = ExtResource("18_fevyy")
 
 [node name="Floor" type="StaticBody3D" parent="."]
 visible = false
@@ -244,7 +246,7 @@ destination_scene = "res://Scenes/maze1.tscn"
 portal_id = "\"main_to_maze1\""
 
 [node name="PlayerSpawnPoint" type="Marker3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -126.86443, 30.123913, 276.9307)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -79.19322, 59.20424, 336.967)
 
 [node name="UI" type="CanvasLayer" parent="."]
 
@@ -267,5 +269,8 @@ offset_right = -20.0
 offset_bottom = 180.0
 grow_horizontal = 0
 
-[node name="boss_enemy" parent="." instance=ExtResource("18_fevyy")]
-transform = Transform3D(-0.018126527, 0, 0.1991769, 0, 0.2, 0, -0.1991769, 0, -0.018126527, -144.79987, 30.098297, 326.59573)
+[node name="BossSpawnPoint" type="Marker3D" parent="."]
+transform = Transform3D(-0.018126527, 0, 0.1991769, 0, 0.2, 0, -0.1991769, 0, -0.018126527, -144.79987, 36.09906, 326.59573)
+
+[node name="Node3D" type="Node3D" parent="."]
+script = ExtResource("19_fevyy")

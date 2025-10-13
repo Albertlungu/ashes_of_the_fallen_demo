@@ -70,6 +70,11 @@ var mesh_default_colors: Array = []
 var mesh_materials: Array = []
 var damage_flash_color := Color(1.0, 0.2, 0.2)
 
+var current_time_scale: float = 1.0
+var is_active := false
+var default_collision_layer: int = 0
+var default_collision_mask: int = 0
+
 # Health bar styling
 var health_stylebox: StyleBoxFlat
 
@@ -83,6 +88,9 @@ var death_spawn_position := Vector3.ZERO
 func _ready():
 	anim_player.play("01_Idle_Aggressive")
 	call_deferred("_find_player")
+	
+	default_collision_layer = collision_layer
+	default_collision_mask = collision_mask
 	
 	# Set up attack area to detect player
 	if attack_area:
@@ -104,6 +112,52 @@ func _ready():
 	reposition_cooldown = randf_range(reposition_interval.x, reposition_interval.y)
 	dash_cooldown = randf_range(dash_cooldown_range.x, dash_cooldown_range.y)
 	_cache_boss_meshes()
+	_set_current_time_scale(1.0)
+	call_deferred("_snap_to_ground")
+	_set_active_state(false)
+
+
+func _snap_to_ground() -> void:
+	if not is_inside_tree():
+		return
+	var space_state := get_world_3d().direct_space_state
+	var from: Vector3 = global_position + Vector3.UP * 10.0
+	var to: Vector3 = global_position + Vector3.DOWN * 500.0
+	var query := PhysicsRayQueryParameters3D.create(from, to)
+	query.collide_with_areas = false
+	query.collide_with_bodies = true
+	var result := space_state.intersect_ray(query)
+	if result:
+		var hit_position: Vector3 = result.position
+		var desired_height: float = maxf(hit_position.y + 0.5, 50.0)
+		global_position = Vector3(hit_position.x, desired_height, hit_position.z)
+		velocity = Vector3.ZERO
+		print("[Boss] Snapped to ground at ", global_position)
+	else:
+		global_position.y = maxf(global_position.y, 50.0)
+		print("[Boss] No ground detected beneath boss (", from, " -> ", to, ") | Forcing height to ", global_position.y)
+
+
+func _set_active_state(active: bool) -> void:
+	if is_active == active:
+		return
+	is_active = active
+	if alien_instance:
+		alien_instance.visible = active
+	if attack_area:
+		attack_area.monitoring = active
+	if not active and health_bar:
+		health_bar.visible = false
+	if not active and health_label:
+		health_label.visible = false
+	if active:
+		collision_layer = default_collision_layer
+		collision_mask = default_collision_mask
+	else:
+		collision_layer = 0
+		collision_mask = 0
+	velocity = Vector3.ZERO
+	print("[Boss] Active state set to ", active)
 
 func _find_player():
 	# Try to get autoloaded Player
@@ -111,6 +165,8 @@ func _find_player():
 	
 	if player:
 		print("✅ Boss found autoloaded player: ", player.name)
+		_connect_player_signals()
+		_update_activation_state()
 		return
 	
 	# If no autoload, search the scene for player group
@@ -121,14 +177,63 @@ func _find_player():
 	if players.size() > 0:
 		player = players[0]
 		print("✅ Boss found player in scene: ", player.name)
+		_connect_player_signals()
+		_update_activation_state()
 	else:
 		print("❌ WARNING: Boss couldn't find player!")
+
+
+func _connect_player_signals() -> void:
+	if not player:
+		return
+	if not player.has_signal("gem_time_changed"):
+		return
+	if player.gem_time_changed.is_connected(_on_player_gem_time_changed):
+		return
+	player.gem_time_changed.connect(_on_player_gem_time_changed)
+	if player.has_signal("inventory_changed") and not player.inventory_changed.is_connected(_on_player_inventory_changed):
+		player.inventory_changed.connect(_on_player_inventory_changed)
+	_on_player_gem_time_changed(player.gem_active, player.gem_time_scale)
+
+
+func _exit_tree() -> void:
+	if player and player.has_signal("gem_time_changed") and player.gem_time_changed.is_connected(_on_player_gem_time_changed):
+		player.gem_time_changed.disconnect(_on_player_gem_time_changed)
+	if player and player.has_signal("inventory_changed") and player.inventory_changed.is_connected(_on_player_inventory_changed):
+		player.inventory_changed.disconnect(_on_player_inventory_changed)
+
+
+func _on_player_gem_time_changed(active: bool, time_scale: float) -> void:
+	_set_current_time_scale(time_scale if active else 1.0)
+	_update_activation_state()
+
+
+func _on_player_inventory_changed() -> void:
+	_update_activation_state()
+
+
+func _update_activation_state() -> void:
+	if not player or not player.has_method("has_gem_of_wit"):
+		_set_active_state(false)
+		return
+	_set_active_state(player.has_gem_of_wit())
+
+
+func _set_current_time_scale(scale: float) -> void:
+	var clamped: float = clampf(scale, 0.05, 1.0)
+	current_time_scale = clamped
+	if anim_player:
+		anim_player.speed_scale = clamped
+
 
 func _physics_process(delta):
 	if is_dying:
 		_handle_death_fade(delta)
 		return
 		
+	if not is_active:
+		return
+	
 	if health <= 0:
 		_die()
 		return
@@ -136,6 +241,8 @@ func _physics_process(delta):
 	if not player or not is_instance_valid(player):
 		print("WARNING: Player reference lost!")
 		return
+
+	var scaled_delta: float = delta * current_time_scale
 
 	var to_player = player.global_position - global_position
 	var distance = to_player.length()
@@ -146,19 +253,15 @@ func _physics_process(delta):
 	# DEBUG: Print distance every second
 	if Engine.get_frames_drawn() % 60 == 0:
 		print("Distance: ", distance, " | State: ", State.keys()[state], " | Attack Timer: ", "%.2f" % attack_timer)
+		print("Boss position: ", global_transform.origin)
 
-	# Slow-time effect
-	var time_multiplier := 1.0
-	if player.has_method("gem_active") and player.gem_active:
-		time_multiplier = player.gem_time_scale
-
-	attack_timer -= delta * time_multiplier
-	_update_damage_flash(delta)
-	_update_combat_behavior(delta * time_multiplier, to_player, distance)
+	attack_timer -= scaled_delta
+	_update_damage_flash(scaled_delta)
+	_update_combat_behavior(scaled_delta, to_player, distance)
 	
 	# Apply gravity to keep boss on ground
 	if not is_on_floor():
-		velocity.y -= gravity * delta
+		velocity.y -= gravity * scaled_delta
 	else:
 		velocity.y = 0.0  # Reset vertical velocity when on ground
 
@@ -181,7 +284,7 @@ func _physics_process(delta):
 				state = State.CHASE
 				reposition_target = Vector3.ZERO
 			else:
-				_patrol(delta * time_multiplier)
+				_patrol(scaled_delta)
 
 		State.CHASE:
 			move_speed_multiplier = chase_speed_multiplier
@@ -200,7 +303,7 @@ func _physics_process(delta):
 				to_player_2d.y = 0
 				if to_player_2d.length() > 0.01:
 					var target_rotation = atan2(to_player_2d.x, to_player_2d.z)
-					rotation.y = lerp_angle(rotation.y, target_rotation, rotation_speed * delta * time_multiplier)
+					rotation.y = lerp_angle(rotation.y, target_rotation, rotation_speed * scaled_delta)
 				
 				# Attack if cooldown is ready
 				if attack_timer <= 0:
@@ -212,12 +315,12 @@ func _physics_process(delta):
 					if not anim_player.is_playing() or anim_player.current_animation == "01_Run":
 						anim_player.play("01_Idle_Aggressive")
 			else:
-				_approach_player(to_player, distance, delta * time_multiplier)
+				_approach_player(to_player, distance, scaled_delta)
 	
 	# Always move and slide (includes gravity)
 	if dash_timer > 0.0:
-		dash_timer -= delta
-		velocity = dash_direction * dash_speed
+		dash_timer -= scaled_delta
+		velocity = dash_direction * dash_speed * current_time_scale
 		if dash_timer <= 0.0:
 			dash_direction = Vector3.ZERO
 	move_and_slide()
@@ -239,8 +342,9 @@ func _move_toward_player(direction: Vector3, delta: float):
 		rotation.y = lerp_angle(rotation.y, target_rotation, rotation_speed * delta)
 	
 	# Only set horizontal velocity (gravity handles vertical)
-	velocity.x = direction.x * speed * move_speed_multiplier
-	velocity.z = direction.z * speed * move_speed_multiplier
+	var effective_speed = speed * move_speed_multiplier * current_time_scale
+	velocity.x = direction.x * effective_speed
+	velocity.z = direction.z * effective_speed
 	
 	# Only play run animation if not already playing an attack
 	var current_anim = anim_player.current_animation
@@ -387,7 +491,6 @@ func _die():
 		
 	print("Boss died!")
 	is_dying = true
-	set_physics_process(false)
 	death_spawn_position = global_position
 	
 	# Play death animation
