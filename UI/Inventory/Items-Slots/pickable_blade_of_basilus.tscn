@@ -1,0 +1,30 @@
+[gd_scene load_steps=6 format=3 uid="uid://drnxqsbgxdux5"]
+
+[ext_resource type="Script" uid="uid://q6730qn2h08q" path="res://UI/Inventory/Items-Slots/pickable_item.gd" id="1_h54zl"]
+[ext_resource type="Resource" path="res://UI/Inventory/Items-Slots/blade_of_basilus.tres" id="3_bpn2e"]
+[ext_resource type="PackedScene" uid="uid://b4oowtsfmf6vj" path="res://ashes-of-the-fallen-assets/Items/Morgul Blade 3D Model.glb" id="4_7adg6"]
+[ext_resource type="Resource" path="res://UI/Inventory/Items-Slots/blade_of_basilus_sword_slot.tres" id="4_m3fsl"]
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_pickup"]
+height = 4.612793
+radius = 1.0
+
+[node name="Area3D" type="Area3D"]
+script = ExtResource("1_h54zl")
+item_data = ExtResource("3_bpn2e")
+slot_data = ExtResource("4_m3fsl")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8063965, 0)
+shape = SubResource("CylinderShape3D_pickup")
+
+[node name="BladeModel" type="Node3D" parent="."]
+
+[node name="PickupLabel" type="Label3D" parent="BladeModel"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.6835256, 0)
+billboard = 1
+text = "Approach and
+press \"E\" to pick up"
+
+[node name="Sketchfab_Scene" parent="BladeModel" instance=ExtResource("4_7adg6")]
+transform = Transform3D(0.08, 0, 0, 0, 0.08, 0, 0, 0, 0.08, 0, -2.0698884, 0)
