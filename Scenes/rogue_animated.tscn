@@ -1,5 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://l5fj4n3w5scn"]
-
-[ext_resource type="PackedScene" uid="uid://bd2p8roe88g5m" path="res://ashes-of-the-fallen-assets/KayKit_Adventurers_1.0_FREE/Characters/gltf/Rogue_Hooded.glb" id="1_8bo6s"]
-
-[node name="Rogue_Hooded" instance=ExtResource("1_8bo6s")]

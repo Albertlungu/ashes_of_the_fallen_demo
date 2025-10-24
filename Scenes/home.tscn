@@ -1,5 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://b5drjp3xlgurh"]
-
-[ext_resource type="PackedScene" uid="uid://dspfn013a4he8" path="res://ashes-of-the-fallen-assets/Environment/Viking House.glb" id="1_tt30a"]
-
-[node name="Sketchfab_Scene" instance=ExtResource("1_tt30a")]
